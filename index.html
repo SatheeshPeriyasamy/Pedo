@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedometer Example</title>
+    <title>Step Counter</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,36 +23,61 @@
     </style>
 </head>
 <body>
-    <h1>Step Counter</h1>
+    <h1>Step Counter Using DeviceMotion API</h1>
     <p id="stepCount">Steps: 0</p>
-    <button onclick="startPedometer()">Start Pedometer</button>
-    <button onclick="stopPedometer()">Stop Pedometer</button>
+    <button onclick="startCounting()">Start Counting</button>
+    <button onclick="stopCounting()">Stop Counting</button>
 
-    <script src="https://cdn.jsdelivr.net/npm/pedometer.js"></script>
     <script>
-        let pedometer;
+        let stepCount = 0;
+        let isCounting = false;
+        let lastX = 0, lastY = 0, lastZ = 0;
+        let threshold = 10; // Adjust this threshold based on your needs
 
-        function startPedometer() {
-            if (!pedometer) {
-                pedometer = new Pedometer();
-            }
-
-            // Start the pedometer
-            pedometer.start();
-            pedometer.on('step', function (count) {
-                document.getElementById('stepCount').innerText = 'Steps: ' + count;
-            });
-
-            pedometer.on('error', function (error) {
-                alert('Error: ' + error);
-            });
+        function startCounting() {
+            alert('Starting the step counter...');
+            isCounting = true;
+            stepCount = 0;
+            document.getElementById('stepCount').innerText = `Steps: ${stepCount}`;
+            window.addEventListener('devicemotion', detectMotion);
+            alert('DeviceMotion listener added!');
         }
 
-        function stopPedometer() {
-            if (pedometer) {
-                pedometer.stop();
-                alert('Pedometer stopped');
+        function stopCounting() {
+            alert('Stopping the step counter...');
+            isCounting = false;
+            window.removeEventListener('devicemotion', detectMotion);
+            alert(`Step counting stopped. Final count: ${stepCount}`);
+        }
+
+        function detectMotion(event) {
+            if (!isCounting) return;
+
+            let x = event.acceleration.x;
+            let y = event.acceleration.y;
+            let z = event.acceleration.z;
+
+            // Log the acceleration values to track them
+            alert(`Device Motion: x=${x}, y=${y}, z=${z}`);
+
+            let deltaX = Math.abs(x - lastX);
+            let deltaY = Math.abs(y - lastY);
+            let deltaZ = Math.abs(z - lastZ);
+
+            // Log the deltas
+            alert(`Deltas: deltaX=${deltaX}, deltaY=${deltaY}, deltaZ=${deltaZ}`);
+
+            // Check if movement exceeds threshold to count as a step
+            if (deltaX > threshold || deltaY > threshold || deltaZ > threshold) {
+                stepCount++;
+                document.getElementById('stepCount').innerText = `Steps: ${stepCount}`;
+                alert(`Step detected! Current count: ${stepCount}`);
             }
+
+            // Save the last values for the next motion detection
+            lastX = x;
+            lastY = y;
+            lastZ = z;
         }
     </script>
 </body>
