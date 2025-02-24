@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedometer Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #stepCount {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Step Counter</h1>
+    <p id="stepCount">Steps: 0</p>
+    <button onclick="startPedometer()">Start Pedometer</button>
+    <button onclick="stopPedometer()">Stop Pedometer</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/pedometer.js"></script>
+    <script>
+        let pedometer;
+
+        function startPedometer() {
+            if (!pedometer) {
+                pedometer = new Pedometer();
+            }
+
+            // Start the pedometer
+            pedometer.start();
+            pedometer.on('step', function (count) {
+                document.getElementById('stepCount').innerText = 'Steps: ' + count;
+            });
+
+            pedometer.on('error', function (error) {
+                alert('Error: ' + error);
+            });
+        }
+
+        function stopPedometer() {
+            if (pedometer) {
+                pedometer.stop();
+                alert('Pedometer stopped');
+            }
+        }
+    </script>
+</body>
+</html>
