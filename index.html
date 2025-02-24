@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Step Counter</title>
+    <title>Step Counter with Logs</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,19 +14,46 @@
             font-size: 24px;
             margin-top: 20px;
         }
+        #status {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        #booleanStatus {
+            font-size: 20px;
+            font-weight: bold;
+            color: red;
+        }
         button {
             font-size: 18px;
             padding: 10px 20px;
             margin: 10px;
             cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        button.start {
+            background-color: green;
+            color: white;
+        }
+        button.start:hover {
+            background-color: darkgreen;
+        }
+        button.stop {
+            background-color: red;
+            color: white;
+        }
+        button.stop:hover {
+            background-color: darkred;
         }
     </style>
 </head>
 <body>
-    <h1>Step Counter Using DeviceMotion API</h1>
+    <h1>Step Counter with Logs and Status</h1>
     <p id="stepCount">Steps: 0</p>
-    <button onclick="startCounting()">Start Counting</button>
-    <button onclick="stopCounting()">Stop Counting</button>
+    <p id="status">Status: <span id="booleanStatus">Not Counting</span></p>
+    <button class="start" onclick="startCounting()">Start Counting</button>
+    <button class="stop" onclick="stopCounting()">Stop Counting</button>
 
     <script>
         let stepCount = 0;
@@ -39,14 +66,22 @@
             isCounting = true;
             stepCount = 0;
             document.getElementById('stepCount').innerText = `Steps: ${stepCount}`;
-            window.addEventListener('devicemotion', detectMotion);
+            document.getElementById('booleanStatus').innerText = 'Counting...';
+            document.getElementById('booleanStatus').style.color = 'green';
+            document.getElementById('status').style.color = 'green';
+
             alert('DeviceMotion listener added!');
+            window.addEventListener('devicemotion', detectMotion);
+            alert('Listening for device motion...');
         }
 
         function stopCounting() {
             alert('Stopping the step counter...');
             isCounting = false;
             window.removeEventListener('devicemotion', detectMotion);
+            document.getElementById('booleanStatus').innerText = 'Not Counting';
+            document.getElementById('booleanStatus').style.color = 'red';
+            document.getElementById('status').style.color = 'red';
             alert(`Step counting stopped. Final count: ${stepCount}`);
         }
 
