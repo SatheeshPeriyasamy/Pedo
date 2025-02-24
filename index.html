@@ -270,143 +270,6 @@
 </html>
  -->
 
-<!--  <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Step Counter with Logs and Status</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-        #stepCount {
-            font-size: 24px;
-            margin-top: 20px;
-        }
-        #status {
-            font-size: 20px;
-            margin-top: 20px;
-        }
-        #booleanStatus {
-            font-size: 20px;
-            font-weight: bold;
-            color: red;
-        }
-        #deltas {
-            font-size: 18px;
-            margin-top: 20px;
-            color: blue;
-        }
-        button {
-            font-size: 18px;
-            padding: 10px 20px;
-            margin: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            border: none;
-            transition: background-color 0.3s;
-        }
-        button.start {
-            background-color: #4CAF50;
-            color: white;
-        }
-        button.start:hover {
-            background-color: #45a049;
-        }
-        button.stop {
-            background-color: #f44336;
-            color: white;
-        }
-        button.stop:hover {
-            background-color: #e53935;
-        }
-    </style>
-</head>
-<body>
-    <h1>Step Counter with Logs and Status</h1>
-    <p id="stepCount">Steps: 0</p>
-    <p id="status">Status: <span id="booleanStatus">Not Counting</span></p>
-    <button class="start" onclick="startCounting()">Start Counting</button>
-    <button class="stop" onclick="stopCounting()">Stop Counting</button>
-    
-    <div id="deltas">
-        <p>Delta Values:</p>
-        <p id="deltaX">deltaX: 0</p>
-        <p id="deltaY">deltaY: 0</p>
-        <p id="deltaZ">deltaZ: 0</p>
-    </div>
-
-    <script>
-        let stepCount = 0;
-        let isCounting = false;
-        let lastX = 0, lastY = 0, lastZ = 0;
-        let threshold = 12; // Further reduced threshold for even more sensitivity
-
-        function startCounting() {
-            alert('Starting the step counter...');
-            isCounting = true;
-            stepCount = 0;
-            document.getElementById('stepCount').innerText = `Steps: ${stepCount}`;
-            document.getElementById('booleanStatus').innerText = 'Counting...';
-            document.getElementById('booleanStatus').style.color = 'green';
-            document.getElementById('status').style.color = 'green';
-
-            alert('DeviceMotion listener added!');
-            window.addEventListener('devicemotion', detectMotion);
-            alert('Listening for device motion...');
-        }
-
-        function stopCounting() {
-            alert('Stopping the step counter...');
-            isCounting = false;
-            window.removeEventListener('devicemotion', detectMotion);
-            document.getElementById('booleanStatus').innerText = 'Not Counting';
-            document.getElementById('booleanStatus').style.color = 'red';
-            document.getElementById('status').style.color = 'red';
-            alert(`Step counting stopped. Final count: ${stepCount}`);
-        }
-
-        function detectMotion(event) {
-            if (!isCounting) return;
-
-            let x = event.acceleration.x;
-            let y = event.acceleration.y;
-            let z = event.acceleration.z;
-
-            // Calculate deltas
-            let deltaX = Math.abs(x - lastX);
-            let deltaY = Math.abs(y - lastY);
-            let deltaZ = Math.abs(z - lastZ);
-
-            // Display the delta values on the screen
-            document.getElementById('deltaX').innerText = `deltaX: ${deltaX}`;
-            document.getElementById('deltaY').innerText = `deltaY: ${deltaY}`;
-            document.getElementById('deltaZ').innerText = `deltaZ: ${deltaZ}`;
-
-            // Log the deltas in console for debugging
-            console.log(`Deltas: deltaX=${deltaX}, deltaY=${deltaY}, deltaZ=${deltaZ}`);
-
-            // Check if movement exceeds threshold to count as a step
-            if (deltaX > threshold || deltaY > threshold || deltaZ > threshold) {
-                stepCount++;
-                document.getElementById('stepCount').innerText = `Steps: ${stepCount}`;
-            }
-
-            // Save the last values for the next motion detection
-            lastX = x;
-            lastY = y;
-            lastZ = z;
-        }
-    </script>
-</body>
-</html>
- --> -->
-
-
-
  <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -480,9 +343,7 @@
         let stepCount = 0;
         let isCounting = false;
         let lastX = 0, lastY = 0, lastZ = 0;
-        let threshold = 15; // Threshold for detecting significant movement (can be adjusted)
-        let lastTime = 0; // Time of the last motion event
-        let lastStepTime = 0; // Time of the last detected step
+        let threshold = 8; // Further reduced threshold for even more sensitivity
 
         function startCounting() {
             alert('Starting the step counter...');
@@ -514,9 +375,8 @@
             let x = event.acceleration.x;
             let y = event.acceleration.y;
             let z = event.acceleration.z;
-            let currentTime = Date.now();
 
-            // Calculate deltas for each axis
+            // Calculate deltas
             let deltaX = Math.abs(x - lastX);
             let deltaY = Math.abs(y - lastY);
             let deltaZ = Math.abs(z - lastZ);
@@ -526,26 +386,25 @@
             document.getElementById('deltaY').innerText = `deltaY: ${deltaY}`;
             document.getElementById('deltaZ').innerText = `deltaZ: ${deltaZ}`;
 
-            // Log the deltas for debugging
+            // Log the deltas in console for debugging
             console.log(`Deltas: deltaX=${deltaX}, deltaY=${deltaY}, deltaZ=${deltaZ}`);
 
-            // Calculate total magnitude of the acceleration change across all axes
-            let totalDelta = deltaX + deltaY + deltaZ;
-
-            // Step Detection: Consider a step when movement is above threshold and there's a reasonable time gap between steps
-            if (totalDelta > threshold && (currentTime - lastStepTime > 500)) {
-                // Detect step and update step count
+            // Check if movement exceeds threshold to count as a step
+            if (deltaX > threshold || deltaY > threshold || deltaZ > threshold) {
                 stepCount++;
                 document.getElementById('stepCount').innerText = `Steps: ${stepCount}`;
-                lastStepTime = currentTime; // Store the time of the last step
             }
 
-            // Save the current values for the next motion detection
+            // Save the last values for the next motion detection
             lastX = x;
             lastY = y;
             lastZ = z;
-            lastTime = currentTime; // Store the time of the current motion event
         }
     </script>
 </body>
 </html>
+ 
+
+
+
+ 
