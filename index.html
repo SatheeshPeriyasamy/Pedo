@@ -480,7 +480,9 @@
         let stepCount = 0;
         let isCounting = false;
         let lastX = 0, lastY = 0, lastZ = 0;
-        let threshold = 12; // Reduced threshold for increased sensitivity
+        let threshold = 15; // Threshold for detecting significant movement (can be adjusted)
+        let lastTime = 0; // Time of the last motion event
+        let lastStepTime = 0; // Time of the last detected step
 
         function startCounting() {
             alert('Starting the step counter...');
@@ -512,6 +514,7 @@
             let x = event.acceleration.x;
             let y = event.acceleration.y;
             let z = event.acceleration.z;
+            let currentTime = Date.now();
 
             // Calculate deltas for each axis
             let deltaX = Math.abs(x - lastX);
@@ -529,16 +532,19 @@
             // Calculate total magnitude of the acceleration change across all axes
             let totalDelta = deltaX + deltaY + deltaZ;
 
-            // If total magnitude exceeds threshold, consider it a step
-            if (totalDelta > threshold) {
+            // Step Detection: Consider a step when movement is above threshold and there's a reasonable time gap between steps
+            if (totalDelta > threshold && (currentTime - lastStepTime > 500)) {
+                // Detect step and update step count
                 stepCount++;
                 document.getElementById('stepCount').innerText = `Steps: ${stepCount}`;
+                lastStepTime = currentTime; // Store the time of the last step
             }
 
             // Save the current values for the next motion detection
             lastX = x;
             lastY = y;
             lastZ = z;
+            lastTime = currentTime; // Store the time of the current motion event
         }
     </script>
 </body>
